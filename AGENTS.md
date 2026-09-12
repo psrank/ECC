@@ -172,3 +172,13 @@ tests/           — Test suite
 - Code is readable and maintainable
 - Performance is acceptable
 - User requirements are met
+
+## Planning artifacts
+
+Before planning or implementation work, inspect:
+
+- `spec-backlog/` for pending proposals or iterations
+- `docs/superpowers/specs/` for approved designs
+- `docs/superpowers/plans/` for implementation plans
+
+Treat missing folders as optional. Do not run an autorun workflow unless explicitly requested.
