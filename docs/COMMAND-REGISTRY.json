@@ -35,7 +35,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "verify"
+      ],
       "path": "commands/checkpoint.md"
     },
     {
@@ -129,7 +131,9 @@
       "type": "review",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/epic-decompose.md"
     },
     {
@@ -259,7 +263,9 @@
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "improve"
+      ],
       "path": "commands/gan-build.md"
     },
     {
@@ -406,7 +412,8 @@
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
-        "jira-integration"
+        "jira-integration",
+        "plan"
       ],
       "path": "commands/jira.md"
     },
@@ -496,7 +503,8 @@
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
-        "marketing-campaign"
+        "marketing-campaign",
+        "plan"
       ],
       "path": "commands/marketing-campaign.md"
     },
@@ -515,7 +523,9 @@
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/multi-backend.md"
     },
     {
@@ -524,7 +534,9 @@
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/multi-execute.md"
     },
     {
@@ -533,7 +545,9 @@
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/multi-frontend.md"
     },
     {
@@ -543,7 +557,9 @@
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
-        "accessibility"
+        "accessibility",
+        "plan",
+        "test"
       ],
       "path": "commands/multi-plan.md"
     },
@@ -553,7 +569,10 @@
       "type": "orchestration",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan",
+        "test"
+      ],
       "path": "commands/multi-workflow.md"
     },
     {
@@ -633,6 +652,7 @@
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
+        "plan",
         "plan-canvas"
       ],
       "path": "commands/plan-canvas.md"
@@ -643,7 +663,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/plan-prd.md"
     },
     {
@@ -657,6 +679,7 @@
         "planner"
       ],
       "skills": [
+        "plan",
         "plan-canvas"
       ],
       "path": "commands/plan.md"
@@ -676,7 +699,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/pr.md"
     },
     {
@@ -686,7 +711,8 @@
       "primaryAgents": [],
       "allAgents": [],
       "skills": [
-        "ecc-guide"
+        "ecc-guide",
+        "test"
       ],
       "path": "commands/project-init.md"
     },
@@ -727,7 +753,10 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan",
+        "test"
+      ],
       "path": "commands/prp-implement.md"
     },
     {
@@ -736,7 +765,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/prp-plan.md"
     },
     {
@@ -754,7 +785,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "plan"
+      ],
       "path": "commands/prp-prd.md"
     },
     {
@@ -790,7 +823,9 @@
       "type": "testing",
       "primaryAgents": [],
       "allAgents": [],
-      "skills": [],
+      "skills": [
+        "test"
+      ],
       "path": "commands/quality-gate.md"
     },
     {
@@ -1080,8 +1115,16 @@
     ],
     "topSkills": [
       {
+        "skill": "plan",
+        "count": 15
+      },
+      {
         "skill": "continuous-learning-v2",
         "count": 6
+      },
+      {
+        "skill": "test",
+        "count": 5
       },
       {
         "skill": "orch-add-feature",
@@ -1110,14 +1153,6 @@
       {
         "skill": "rust-patterns",
         "count": 3
-      },
-      {
-        "skill": "cpp-coding-standards",
-        "count": 2
-      },
-      {
-        "skill": "cpp-testing",
-        "count": 2
       }
     ]
   }

@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Remember"
+  short_description: "Save durable context and handoffs safely"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:remember to run only the manual remember stage."
+policy:
+  allow_implicit_invocation: false

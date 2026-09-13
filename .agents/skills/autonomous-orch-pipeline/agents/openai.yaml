@@ -1,0 +1,7 @@
+interface:
+  display_name: "Autonomous Orchestrator"
+  short_description: "Run one planned item through bounded quality gates"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:autonomous-orch-pipeline to run one approved plan item safely."
+policy:
+  allow_implicit_invocation: false

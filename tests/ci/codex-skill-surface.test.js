@@ -66,6 +66,15 @@ function parseQuotedYamlValue(source, key) {
   return raw;
 }
 
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function hasExactSkillMention(prompt, skillName, namespace = '') {
+  const escapedSkillName = escapeRegExp(skillName);
+  return new RegExp(`\\$${namespace}${escapedSkillName}(?![A-Za-z0-9_-])`).test(prompt);
+}
+
 function run() {
   console.log('\n=== Testing Codex skill surface ===\n');
 
@@ -79,6 +88,13 @@ function run() {
 
   if (test('Codex skill surface includes the MLE workflow', () => {
     assert.ok(skillDirs.includes('mle-workflow'), 'Expected .agents/skills/mle-workflow');
+  })) passed++; else failed++;
+
+  if (test('skill default prompts use complete bare or ECC skill tokens', () => {
+    assert.ok(hasExactSkillMention('Use $plan now.', 'plan'));
+    assert.ok(hasExactSkillMention('Use $ecc:plan now.', 'plan', 'ecc:'));
+    assert.ok(!hasExactSkillMention('Use $plan-canvas now.', 'plan'));
+    assert.ok(!hasExactSkillMention('Use $ecc:plan-canvas now.', 'plan', 'ecc:'));
   })) passed++; else failed++;
 
   if (test('SKILL.md frontmatter matches Codex validator expectations', () => {
@@ -110,8 +126,9 @@ function run() {
         `${skillDir}/agents/openai.yaml short_description must be 25-64 characters`
       );
       assert.ok(
-        defaultPrompt.includes(`$${skillDir}`),
-        `${skillDir}/agents/openai.yaml default_prompt must mention $${skillDir}`
+        hasExactSkillMention(defaultPrompt, skillDir) ||
+          hasExactSkillMention(defaultPrompt, skillDir, 'ecc:'),
+        `${skillDir}/agents/openai.yaml default_prompt must mention $${skillDir} or $ecc:${skillDir}`
       );
     }
   })) passed++; else failed++;

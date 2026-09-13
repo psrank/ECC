@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Verify"
+  short_description: "Run repository quality checks and report results"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:verify to run only the manual verify stage."
+policy:
+  allow_implicit_invocation: false

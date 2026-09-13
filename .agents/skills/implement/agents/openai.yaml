@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Implement"
+  short_description: "Make approved RED tests pass with minimal code"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:implement to run only the manual implement stage."
+policy:
+  allow_implicit_invocation: false

@@ -45,6 +45,40 @@ Available skills:
 - fal-ai-media — AI image/video/audio generation via fal.ai
 - dmux-workflows — Multi-agent orchestration with dmux
 
+## Manual Core Workflow
+
+ECC's native plugin namespaces these explicitly invoked stages:
+
+| Stage | Invoke |
+|---|---|
+| Plan | `$ecc:plan` |
+| Test | `$ecc:test` |
+| Implement | `$ecc:implement` |
+| Review | `$ecc:review` |
+| Verify | `$ecc:verify` |
+| Remember | `$ecc:remember` |
+| Improve | `$ecc:improve` |
+
+Each stage stops at its own boundary. ECC never autoruns the next stage.
+
+## Autonomous Workflow
+
+Use `$ecc:autonomous-orch-pipeline` for one approved plan item that should run
+through TDD, review, verification, safe memory capture, and an improvement
+proposal without manually invoking each intermediate stage. It still stops for
+plan approval, commit approval, repeated-review escalation after three failed
+rounds, and any unsafe or ambiguous condition. It never pushes automatically.
+On a new session it resumes one compatible unfinished local ledger from its
+recorded checkpoint; with several candidates it asks the user to choose and
+never infers an owned run from a plan file or dirty worktree. Compatibility
+requires the original repository, worktree, branch, plan fingerprint, and
+baseline commit; a pending approval is resumed as a gate, never bypassed.
+Before working, it reports the current stage, last completed checkpoint,
+evidence basis, and next action; a review blocker without later GREEN evidence
+resumes as implementation remediation and takes precedence over generic review
+resolution. A blocked run re-presents its blocker and never resumes until the
+user explicitly confirms it is resolved.
+
 ## MCP Servers
 
 Treat the project-local `.codex/config.toml` as the default Codex baseline for ECC. The current ECC baseline enables GitHub, Context7, Exa, Memory, Playwright, and Sequential Thinking; add heavier extras in `~/.codex/config.toml` only when a task actually needs them.

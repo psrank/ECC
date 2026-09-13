@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Test"
+  short_description: "Write RED behavior tests before implementation"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:test to run only the manual test stage."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Plan"
+  short_description: "Plan a bounded change with an approval gate"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:plan to run only the manual plan stage."
+policy:
+  allow_implicit_invocation: false

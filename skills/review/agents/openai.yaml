@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Review"
+  short_description: "Review changes with actionable evidence"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:review to run only the manual review stage."
+policy:
+  allow_implicit_invocation: false

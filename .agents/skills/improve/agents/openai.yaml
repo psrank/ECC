@@ -1,0 +1,7 @@
+interface:
+  display_name: "ECC Improve"
+  short_description: "Propose evidence-backed workflow improvements"
+  brand_color: "#E07856"
+  default_prompt: "Use $ecc:improve to run only the manual improve stage."
+policy:
+  allow_implicit_invocation: false
