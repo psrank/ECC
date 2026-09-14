@@ -13,6 +13,17 @@ const REQUIRED_SKILL_PHRASES = [
   'Do not alter production code until the user approves.',
   'Commit only when the user explicitly approves; never push automatically.',
   '.ecc/autonomous-runs/<run-id>.md',
+  '.ecc/autonomous-state.json',
+  '"schemaVersion": 1',
+  'ledger remains authoritative',
+  'write the ledger first',
+  'after every state transition that changes resume-selection fields',
+  'derive the index entry from the ledger',
+  'validate the selected index entry against its ledger',
+  'rebuild the entire index from valid local ledgers',
+  'set the affected run to `needs_user_approval`',
+  'Never select by timestamp alone',
+  'never stores raw transcripts, command output, Memory Vault bodies, credentials, private keys, or tokens',
   'Resume Discovery and Checkpointing',
   'before accepting a new plan or plain-language request',
   'exactly one compatible non-terminal ledger',
@@ -32,6 +43,14 @@ const REQUIRED_SKILL_PHRASES = [
   'implement (review remediation) | review',
   'A `blocked` ledger must present its recorded blocker and stop',
   'missing or contradictory durable evidence',
+  'External Structured State',
+  '.autorun/state.json',
+  'exactly one pending or in-progress item',
+  'exactly one accepted plan item match',
+  'first non-completed stage',
+  'implement (autorun apply)',
+  'Map `branch`, `propose`, `review`, and `gitignore` to `plan-gate`',
+  'Never modify `.autorun/state.json`',
   'raw transcripts, secrets, credentials',
   'three failed review/remediation rounds',
   'needs_user_approval',
@@ -111,7 +130,7 @@ if (test('defines the approved autonomous lifecycle and bounded recovery contrac
   }
 })) passed += 1; else failed += 1;
 
-if (test('packages the skill and ignores local run ledgers', () => {
+if (test('packages the skill and ignores local run state', () => {
   const packageJson = JSON.parse(readUtf8(path.join(REPO_ROOT, 'package.json')));
   assert.ok(packageJson.files.includes(`skills/${SKILL}/`), 'package.json must ship the canonical skill');
   const modules = JSON.parse(readUtf8(path.join(REPO_ROOT, 'manifests', 'install-modules.json'))).modules;
@@ -121,10 +140,9 @@ if (test('packages the skill and ignores local run ledgers', () => {
     agenticPatterns.paths.includes(`skills/${SKILL}`),
     'agentic-patterns must install the canonical skill'
   );
-  assert.ok(
-    readUtf8(path.join(REPO_ROOT, '.gitignore')).includes('/.ecc/autonomous-runs/'),
-    '.gitignore must protect local autonomous run ledgers'
-  );
+  const ignoreRules = readUtf8(path.join(REPO_ROOT, '.gitignore'));
+  assert.ok(ignoreRules.includes('/.ecc/autonomous-runs/'));
+  assert.ok(ignoreRules.includes('/.ecc/autonomous-state.json'));
 })) passed += 1; else failed += 1;
 
 console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);

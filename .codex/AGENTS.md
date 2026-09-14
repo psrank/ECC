@@ -78,6 +78,22 @@ evidence basis, and next action; a review blocker without later GREEN evidence
 resumes as implementation remediation and takes precedence over generic review
 resolution. A blocked run re-presents its blocker and never resumes until the
 user explicitly confirms it is resolved.
+The Git-ignored `.ecc/autonomous-state.json` is a versioned candidate index;
+the corresponding Markdown ledger remains authoritative for evidence and
+transitions. At each checkpoint, write the ledger first, derive and validate a
+complete index replacement from it, then use the index only to find candidates
+on a later session. Validate a selected entry against its ledger and the
+current repository context before continuing. If the index is missing,
+malformed, stale, or conflicts with the ledger, rebuild it from valid ledgers,
+set the affected run to `needs_user_approval`, and stop. Never select by
+timestamp alone. See the [state-index design](../docs/superpowers/specs/2026-09-13-autonomous-pipeline-state-index-design.md)
+for the complete schema and recovery contract.
+When no pipeline ledger exists, it may read a valid `.autorun/state.json`
+without modifying it. A sole started pending item with a unique accepted-plan
+match is resumed from its first incomplete native stage; for example, `apply`
+maps to implementation, while its pre-code review maps to the plan gate.
+After a unique accepted-plan match, that read-only external state seeds the
+normal local ledger first and only then its derived state-index entry.
 
 ## MCP Servers
 

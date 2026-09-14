@@ -9,8 +9,11 @@ as explicit-only workflows.
 canonical `skills/` surface and mirror it exactly under `.agents/skills/` for
 Codex. It reuses `orch-pipeline`, `verification-loop`, and `unified-memory` as
 guidance rather than reimplementing them. The skill owns a local,
-Git-ignored `.ecc/autonomous-runs/<run-id>.md` ledger and its bounded
-state-machine contract. A Node structural test locks that contract down.
+Git-ignored `.ecc/autonomous-runs/<run-id>.md` ledger and a derived,
+versioned `.ecc/autonomous-state.json` candidate index. The ledger remains
+authoritative; a Node structural test locks the bounded state-machine and
+state-index contracts down. The detailed index contract is in
+[the state-index design](../specs/2026-09-13-autonomous-pipeline-state-index-design.md).
 
 **Tech stack:** Markdown skills, YAML skill metadata, Node.js built-in
 assertions, the existing ECC catalog and skill validators.
@@ -29,6 +32,11 @@ assertions, the existing ECC catalog and skill validators.
 - Keep `improve` proposal-only and treat unavailable safe Memory Vault writes
   as visible `memory-pending`, not a reason to bypass the Vault safeguards.
 - Do not add a legacy slash-command shim in this release.
+- Use `.ecc/autonomous-state.json` with `schemaVersion: 1` only as a derived
+  candidate index. Write the authoritative Markdown ledger first; validate the
+  full derived index before replacing it. A missing, malformed, stale, or
+  conflicting index rebuilds from valid ledgers and stops the affected run at
+  `needs_user_approval`; it never chooses a run by timestamp alone.
 
 ## Worktree Constraint
 
@@ -73,6 +81,9 @@ alongside the existing count changes.
    - no automatic push or external publishing;
    - a `.ecc/autonomous-runs/<run-id>.md` ledger with no raw transcripts or
      secrets;
+   - a Git-ignored `.ecc/autonomous-state.json` `schemaVersion: 1` index that
+     is derived ledger-first, validated before continuation, and rebuilt to
+     `needs_user_approval` on a discrepancy without timestamp-only selection;
    - three failed review/remediation rounds as the default, followed by
      `needs_user_approval` and authorization for exactly one more round;
    - verification-failure recovery and the two-checkpoint no-progress stop;
@@ -110,7 +121,7 @@ alongside the existing count changes.
 - Input: a `@plan-path#item-id` reference or an unplanned plain-language
   request.
 - Output: an approved-item run ledger, phase evidence, an explicit approval
-  request when required, and a terminal status.
+  request when required, a derived state-index entry, and a terminal status.
 
 1. Add skill frontmatter named `autonomous-orch-pipeline` with a concise
    description that makes its explicit invocation and autonomous
@@ -129,24 +140,47 @@ alongside the existing count changes.
    checkpoint, next action, transition history, command evidence, review
    count/findings, memory status, improvement proposal, and final status.
    Explicitly prohibit secrets and raw transcripts.
-4. Before new-request intake, discover non-terminal ledgers. Resume exactly
-   one ledger compatible with the supplied plan item, or the sole unfinished
-   ledger when no input is supplied. Require matching repository, canonical
-   worktree, branch, plan fingerprint, and baseline-commit fields; a mismatch
-   stops for re-approval or an explicit new run. Report its checkpoint and
-   pending gate; let the user choose among multiple candidates. Treat
+4. Define `.ecc/autonomous-state.json` as a Git-ignored `schemaVersion: 1`
+   index with only a run's ledger path, status, current stage, last completed
+   checkpoint, next action, plan identity/fingerprint, repository/worktree/
+   branch/baseline context, and timestamp. The Markdown ledger remains
+   authoritative. On creation and after every checkpoint or state transition,
+   write the ledger first, derive its index entry, validate the complete JSON
+   document, then replace the index as one complete document. Never write
+   transcripts, command output, Memory Vault bodies, credentials, private
+   keys, or tokens to the index.
+5. Before new-request intake, use the index only to list non-terminal
+   candidates and validate the selected entry against its referenced ledger
+   and the repository, canonical worktree, branch, plan fingerprint, and
+   baseline-commit fields. Resume exactly one compatible ledger matching the
+   supplied plan item, or the sole unfinished compatible ledger when no input
+   is supplied. If the index is missing, malformed, references a missing
+   ledger, or differs from ledger-derived selection fields, rebuild the entire
+   index from valid local ledgers, set the affected run to
+   `needs_user_approval`, report the mismatch, and stop. Let the user choose
+   among multiple candidates; never select by timestamp alone. Treat
    `needs_user_approval` and `blocked` as paused/resumable states, not final
    outcomes. Never infer an owned run solely from a plan file, task checkbox,
    worktree, branch, or conversation. Checkpoint before each stage and advance
    only after its evidence is recorded, so interruption repeats the incomplete
    stage safely.
-5. Resolve and report `Current stage`, last completed checkpoint, evidence
+6. Resolve and report `Current stage`, last completed checkpoint, evidence
    basis, and next action before autonomous work. Prefer explicit ledger fields;
    otherwise derive only from ordered durable evidence. In particular, a
    blocking review finding without later GREEN takes precedence and maps to
    `implement (review remediation)`. Missing or contradictory evidence maps to
    `needs_user_approval`, never a guessed stage.
-6. Implement the autonomous phase rules in the skill text:
+7. When no autonomous ledger exists, optionally adopt a valid repository-local
+   `.autorun/state.json` as a read-only structured checkpoint source. Select
+   exactly one started pending/in-progress item with exactly one accepted plan
+   match, exclude skipped and completed items, identify its first non-completed
+   native stage, and report it with the mapped pipeline stage. Map `apply` to
+   `implement (autorun apply)` and pre-code `branch`, `propose`, `review`, and
+   `gitignore` to `plan-gate`; do not modify external state, bypass plan
+   approval, or silently resolve conflicts with a local ledger. After a unique
+   accepted-plan match, create the normal Markdown ledger first and derive the
+   local index entry from it; the external file remains read-only.
+8. Implement the autonomous phase rules in the skill text:
 
    - create focused RED evidence, then make the smallest GREEN change;
    - route only behavior-related RED failures to implementation and escalate
@@ -162,7 +196,7 @@ alongside the existing count changes.
    - freeze after the same verification failure makes no measurable progress
      across two repair checkpoints;
    - request approval before conventional commit and never push.
-7. Define the final stages:
+9. Define the final stages:
 
    - use `unified-memory` to search before saving a concise, non-secret,
      evidence-backed outcome; do not initialize, weaken, or bypass the Vault;
@@ -170,19 +204,19 @@ alongside the existing count changes.
      or rejects the save;
    - create the smallest evidence-based improvement proposal, but do not edit
      workflow artifacts without separate approval.
-8. Define completion states exactly as the approved design: `completed`,
+10. Define completion states exactly as the approved design: `completed`,
    `completed-with-memory-pending`, `needs_user_approval`, and `blocked`.
    A failed required verification, unresolved blocking finding, or declined
    gate must not be reported as completed.
-9. Reference `orch-pipeline`, `verification-loop`, and `unified-memory`
+11. Reference `orch-pipeline`, `verification-loop`, and `unified-memory`
    instead of duplicating their detailed checklists. State directly that the
    manual `$ecc:plan` through `$ecc:improve` skills remain explicit-only and
    are never invoked automatically by this skill.
-10. Add identical `openai.yaml` metadata on both surfaces. Use a 25–64
+12. Add identical `openai.yaml` metadata on both surfaces. Use a 25–64
    character short description, a default prompt naming only
    `$ecc:autonomous-orch-pipeline`, and
    `allow_implicit_invocation: false`.
-11. Copy the canonical files to the Codex mirror without divergence and run:
+13. Copy the canonical files to the Codex mirror without divergence and run:
 
    ```bash
    rtk node tests/ci/autonomous-orch-pipeline.test.js
@@ -202,7 +236,8 @@ alongside the existing count changes.
 - Modify: `.codex-plugin/plugin.json`
 - Test: `tests/ci/autonomous-orch-pipeline.test.js`
 
-1. Add `/.ecc/autonomous-runs/` to `.gitignore`. Do not ignore
+1. Add `/.ecc/autonomous-runs/` and `/.ecc/autonomous-state.json` to
+   `.gitignore`. Do not ignore
    `.ecc/memory/`; its existing Memory Vault safeguards remain authoritative.
 2. Add `skills/autonomous-orch-pipeline/` adjacent to the existing `orch-*`
    package entries and add `skills/autonomous-orch-pipeline` to the

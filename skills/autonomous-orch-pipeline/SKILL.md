@@ -48,6 +48,8 @@ Use a stable run ID when resuming. Record:
 - source plan and item ID, objective, scope, and acceptance criteria;
 - repository identity, canonical worktree path, branch, plan path and item ID,
   plan fingerprint, and baseline commit;
+- external structured-state source, fingerprint, item ID, native stage, and
+  its mapped pipeline stage when one is adopted;
 - active stage, last completed checkpoint, recorded next action, timestamps,
   and transition history;
 - stage-resolution basis and the durable evidence that supports it;
@@ -59,6 +61,45 @@ Use a stable run ID when resuming. Record:
 
 Never put raw transcripts, secrets, credentials, private keys, tokens, or
 copied Memory Vault bodies in the ledger. It is a local resume aid, not a task
+tracker or an authoritative architecture record.
+
+## Local State Index
+
+Use `.ecc/autonomous-state.json` as a compact, rebuildable discovery index for
+local ledgers. The ledger remains authoritative: it is the sole source for
+evidence, approvals, findings, and transition history. The index only stores
+the selection and checkpoint fields derived from a ledger:
+
+```json
+{
+  "schemaVersion": 1,
+  "updatedAt": "<ISO-8601 timestamp>",
+  "runs": {
+    "<run-id>": {
+      "ledgerPath": ".ecc/autonomous-runs/<run-id>.md",
+      "status": "<run state>",
+      "currentStage": "<pipeline stage>",
+      "lastCompletedCheckpoint": "<checkpoint or null>",
+      "nextAction": "<bounded action>",
+      "plan": {
+        "path": "<relative path>",
+        "itemId": "<item ID>",
+        "fingerprint": "<hash>"
+      },
+      "context": {
+        "repositoryIdentity": "<id>",
+        "worktreePath": "<path>",
+        "branch": "<branch>",
+        "baselineCommit": "<commit>"
+      },
+      "updatedAt": "<ISO-8601 timestamp>"
+    }
+  }
+}
+```
+
+The index never stores raw transcripts, command output, Memory Vault bodies,
+credentials, private keys, or tokens. It is a local resume aid, not a task
 tracker or an authoritative architecture record.
 
 ## Resume Discovery and Checkpointing
@@ -94,12 +135,77 @@ before accepting a new plan or plain-language request.
    merely marked incomplete or complete. Those signals do not establish that
    this pipeline owns the work.
 
-Before starting a lifecycle stage, write it as the active stage and record its
-next action. After evidence confirms a checkpoint, append the outcome and
-advance the last completed checkpoint and next action. If a session ends while
+On creation and after every state transition that changes resume-selection
+fields (`status`, `currentStage`, `lastCompletedCheckpoint`, or `nextAction`),
+write the ledger first. This includes before starting a lifecycle stage, when
+the active stage and next action are recorded, and after evidence confirms a
+checkpoint, when the outcome, last completed checkpoint, and next action
+advance. After every such ledger write, derive the index entry from the ledger,
+validate the complete JSON document, then replace
+`.ecc/autonomous-state.json` as one complete document. If a session ends while
 a stage is active, resume from the last completed checkpoint and repeat the
 interrupted stage unless its required evidence was already recorded. Never
 treat partial work or an absent ledger as completed evidence.
+
+On startup, use the index only to list candidates. Then validate the selected
+index entry against its ledger and the existing repository, worktree, branch,
+plan-fingerprint, and baseline-commit checks before any continuation. If that
+validation leaves multiple compatible runs, require the operator to select one;
+do not use the index to choose on their behalf.
+
+If the index is missing, malformed, references a missing ledger, or differs
+from ledger-derived selection fields, rebuild the entire index from valid local
+ledgers; set the affected run to `needs_user_approval`, report the mismatch and
+rebuilt index, and stop. Never select by timestamp alone or overwrite ledger
+evidence.
+
+## External Structured State
+
+When no compatible autonomous-run ledger exists, inspect
+`.autorun/state.json` if it is present. It is a structured state source, not a
+plan document or a worktree heuristic. Never modify `.autorun/state.json`.
+
+Adopt it only when it is valid JSON containing a stage order in
+`definition.stages`, item records in `items`, per-stage status, and a matching
+accepted plan item. With an explicit `@plan-path#item-id`, require the state
+item ID and the plan fingerprint to match that reference. Without an explicit
+reference, require exactly one accepted plan item match before adopting an
+external item. Then select only exactly one pending or in-progress item that
+has completed its `branch` stage; exclude `skipped`, completed, and
+not-yet-started items. If any plan match or item selection is ambiguous, report
+the candidates and ask the operator to choose. Do not choose by event recency.
+
+For an adopted item, determine the first non-completed stage in the declared
+stage order and report both its native and mapped stages:
+
+```text
+State source: .autorun/state.json
+Selected item: <item ID>
+Native stage: <external stage>
+Current stage: <mapped pipeline stage>
+Last completed checkpoint: <external stage>
+Basis: <item status and stage statuses>
+Next action: <one bounded action>
+```
+
+Map `tests-before` to `test`, `apply` to `implement (autorun apply)`,
+`tests-after`, `lint`, `contracts-validate`, `verify`, `verify-runtime`, and
+`tasks-audit` to `verify`, `archive` to `remember`, and `commit` to
+`commit-gate`. Map `branch`, `propose`, `review`, and `gitignore` to
+`plan-gate`, while always reporting the native label too. An external state can
+identify a checkpoint but cannot bypass the pipeline's plan-approval rule
+unless the referenced accepted plan records that approval.
+
+Copy only the selected item ID, state-file fingerprint, native stage, mapped
+stage, and non-secret evidence summary into the local run ledger. If an
+existing local ledger and the structured state disagree on item, checkpoint, or
+repository context, set `needs_user_approval` and stop rather than choosing an
+authority silently.
+
+After a uniquely matched, accepted external item is adopted, create the normal
+Markdown ledger first and then derive the local index entry from that ledger.
+Never modify `.autorun/state.json` or use the external state as a substitute
+for the local ledger and index.
 
 ## Stage Resolution
 
@@ -107,7 +213,7 @@ Before doing autonomous work, report the resolved checkpoint rather than only
 restating the selected plan:
 
 ```text
-Current stage: <plan-gate | test | implement | implement (review remediation) | review | verify | commit-gate | remember | improve>
+Current stage: <plan-gate | test | implement | implement (autorun apply) | implement (review remediation) | review | verify | commit-gate | remember | improve>
 Last completed checkpoint: <checkpoint or none>
 Basis: <ledger fields and durable evidence>
 Next action: <one bounded action>

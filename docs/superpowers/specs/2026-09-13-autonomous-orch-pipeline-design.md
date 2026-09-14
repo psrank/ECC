@@ -24,6 +24,8 @@ human approval of consequential actions.
 - Persist a resumable per-item run ledger under
   `.ecc/autonomous-runs/<run-id>.md`; ignore those local execution records in
   Git.
+- Maintain a Git-ignored, versioned `.ecc/autonomous-state.json` index derived
+  from local ledgers to make active and paused run discovery deterministic.
 - Automatically run the test, implementation, review, verification, memory,
   and improvement phases after the plan gate, subject to the guards below.
 - Add package-surface, install-manifest, and structural tests for the new
@@ -56,7 +58,7 @@ Only an approved item may enter the autonomous portion of the workflow.
 The skill is explicit-only. A legacy command shim is out of scope for the
 first release because `skills/` is ECC's canonical workflow surface.
 
-## Run Ledger
+## Run Ledger and State Index
 
 Each invocation creates or resumes a Markdown ledger with a stable run ID.
 The ledger records only the minimum safe execution state:
@@ -75,20 +77,47 @@ The ledger must not contain raw transcripts, secrets, credentials, or copied
 Memory Vault bodies. It is a local resume aid, not an authoritative project
 decision record.
 
-On invocation, the pipeline first scans the ledger directory. It resumes a
-single compatible non-terminal ledger (matching an explicit plan-item
-reference, or the sole non-terminal ledger when no input is supplied), reports
-its checkpoint and pending gate, and continues from its recorded next action.
-Compatibility also requires the recorded repository, canonical worktree,
-branch, plan fingerprint, and baseline commit to match the current context.
-With multiple candidates it asks the operator to choose; it never selects by
-recency. A missing or mismatched ownership field stops the run for a new plan
-approval or an explicit new run. It must not infer an owned in-progress run
-from plan files, a dirty worktree, a branch name, or conversation context.
-Before each stage it records the active stage and next action; only recorded
-evidence advances the last completed checkpoint. `needs_user_approval` is a
-paused/resumable state, not a completed outcome, so the next session surfaces
-its decision rather than starting a different run.
+The Git-ignored `.ecc/autonomous-state.json` is a compact `schemaVersion: 1`
+candidate index, not a second evidence record. It includes only each run's
+ledger path, status, current stage, last completed checkpoint, next action,
+plan identity/fingerprint, context identity, and timestamp. The Markdown
+ledger remains authoritative for all evidence, approvals, findings, and
+transitions. The index never stores transcripts, command output, Memory Vault
+bodies, credentials, private keys, or tokens. The detailed schema and recovery
+rules live in [the state-index design](2026-09-13-autonomous-pipeline-state-index-design.md).
+
+On creation and after every completed checkpoint or state transition, the
+pipeline writes the ledger first, derives the index entry from that ledger,
+validates the complete JSON document, and replaces the index as one complete
+document. On invocation it uses the index only to list candidates. Before
+continuing, it validates the selected entry against its referenced ledger and
+the recorded repository, canonical worktree, branch, plan fingerprint, and
+baseline commit.
+
+If the index is missing, malformed, references a missing ledger, or differs
+from ledger-derived selection fields, the pipeline rebuilds the entire index
+from valid local ledgers, sets the affected run to `needs_user_approval`,
+reports the mismatch and rebuilt result, and stops. It never selects by
+timestamp alone, overwrites ledger evidence, or infers an owned in-progress
+run from plan files, a dirty worktree, a branch name, or conversation context.
+With multiple compatible candidates after validation, it asks the operator to
+choose. A missing or mismatched ownership field stops the run for a new plan
+approval or an explicit new run. `needs_user_approval` is paused/resumable,
+not a completed outcome, so the next session surfaces its decision rather than
+starting a different run.
+
+When no autonomous ledger exists, a repository-local `.autorun/state.json`
+with a declared stage order and item-stage status may serve as a read-only
+structured checkpoint source. It selects exactly one started pending or
+in-progress item with exactly one accepted plan-item match, excludes
+skipped/completed items, and maps its first non-completed native stage to the
+pipeline: notably, `apply` maps to `implement (autorun apply)`, while
+pre-code `branch`, `propose`, `review`, and `gitignore` map to `plan-gate`.
+The run report preserves both labels. This source never bypasses plan approval,
+is never modified, and conflicts with a local ledger stop for user direction.
+After a uniquely matched, accepted external item is adopted, the pipeline
+creates the normal Markdown ledger first, records the external fingerprint and
+native stage there, and then derives its local state-index entry.
 
 When a ledger is incomplete or was created by an earlier version of the
 workflow, the pipeline resolves and reports an explicit current stage from
@@ -188,3 +217,6 @@ the two skill surfaces, explicit-only invocation metadata, lifecycle order,
 all gates, review-limit escalation, completion states, manual-stage
 compatibility, package inclusion, and the ignored run-ledger location. Existing
 manual-core and Codex-surface tests must continue to pass.
+The state-index contract adds schema, ledger-first derivation, selected-entry
+validation, deterministic rebuild, and read-only external-autorun seeding
+coverage.

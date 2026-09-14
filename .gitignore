@@ -82,6 +82,7 @@ marketing/
 .claude/worktrees/
 .claude/scheduled_tasks.lock
 /.ecc/autonomous-runs/
+/.ecc/autonomous-state.json
 
 # Temporary files
 tmp/
