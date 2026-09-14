@@ -106,10 +106,10 @@ Use these prompts in Copilot Chat for deeper workflows:
 
 | Prompt | When to use | Purpose |
 |--------|-------------|---------|
-| `/plan` | Complex feature | Phased implementation plan |
-| `/tdd` | New feature or bug fix | Test-driven development cycle |
-| `/security-review` | Before a release | Deep security analysis |
-| `/build-fix` | Build/CI failure | Systematic error resolution |
-| `/refactor` | Code maintenance | Dead code cleanup and simplification |
+| `/ecc-plan` | Complex feature | Phased implementation plan |
+| `/ecc-tdd` | New feature or bug fix | Test-driven development cycle |
+| `/ecc-security-review` | Before a release | Deep security analysis |
+| `/ecc-build-fix` | Build/CI failure | Systematic error resolution |
+| `/ecc-refactor` | Code maintenance | Dead code cleanup and simplification |
 
 To use: open Copilot Chat, type `/` and select the prompt from the picker.

@@ -55,7 +55,13 @@ test('Copilot prompt files use current VS Code frontmatter', () => {
     .filter(file => file.endsWith('.prompt.md'))
     .sort();
 
-  assert.deepStrictEqual(promptFiles, ['build-fix.prompt.md', 'plan.prompt.md', 'refactor.prompt.md', 'security-review.prompt.md', 'tdd.prompt.md']);
+  assert.deepStrictEqual(promptFiles, [
+    'ecc-build-fix.prompt.md',
+    'ecc-plan.prompt.md',
+    'ecc-refactor.prompt.md',
+    'ecc-security-review.prompt.md',
+    'ecc-tdd.prompt.md'
+  ]);
 
   for (const file of promptFiles) {
     const relativePath = `.github/prompts/${file}`;
@@ -75,9 +81,9 @@ test('Copilot docs advertise slash prompt invocation instead of hash commands', 
     assert.ok(!sources.includes(`#${command}`), `Expected no stale #${command} command syntax`);
   }
 
-  assert.ok(sources.includes('/plan'));
-  assert.ok(sources.includes('/tdd'));
-  assert.ok(sources.includes('/security-review'));
+  for (const command of ['ecc-plan', 'ecc-tdd', 'ecc-security-review', 'ecc-build-fix', 'ecc-refactor']) {
+    assert.ok(sources.includes(`/${command}`), `Expected documentation for /${command}`);
+  }
 });
 
 test('Copilot instructions include a prompt defense baseline', () => {

@@ -380,7 +380,7 @@ cd ECC
 | CodeBuddy | `./install.sh --profile minimal --target codebuddy` | Project-local `.codebuddy/` install |
 | JoyCode | `./install.sh --profile minimal --target joycode` | Project-local `.joycode/` install |
 
-GitHub Copilot support is already included in this repository. `.github/copilot-instructions.md` provides the instruction layer, `.github/prompts/` contains the reusable `/plan`, `/tdd`, `/security-review`, `/build-fix`, and `/refactor` prompts, and `.vscode/settings.json` enables `chat.promptFiles`.
+GitHub Copilot support is already included in this repository. `.github/copilot-instructions.md` provides the instruction layer, `.github/prompts/` contains the reusable `/ecc-plan`, `/ecc-tdd`, `/ecc-security-review`, `/ecc-build-fix`, and `/ecc-refactor` prompts, and `.vscode/settings.json` enables `chat.promptFiles`.
 
 For a harness without a native ECC target, use the [manual adaptation guide](docs/MANUAL-ADAPTATION-GUIDE.md). It explains how to carry a small set of ECC skills and workflow instructions into chat-style tools without pretending hooks or native skill discovery are available.
 
@@ -1624,30 +1624,30 @@ ECC provides **GitHub Copilot support** for VS Code via Copilot Chat's native in
 |-----------|------|---------|
 | Core instructions | `.github/copilot-instructions.md` | Always-loaded rules: coding style, security, testing, git workflow |
 | VS Code settings | `.vscode/settings.json` | Per-task instruction files for code gen, test gen, and commit messages |
-| Plan prompt | `.github/prompts/plan.prompt.md` | Phased implementation planning |
-| TDD prompt | `.github/prompts/tdd.prompt.md` | Red-Green-Improve cycle |
-| Security review prompt | `.github/prompts/security-review.prompt.md` | Deep OWASP-aligned security analysis |
-| Build fix prompt | `.github/prompts/build-fix.prompt.md` | Systematic build and CI error resolution |
-| Refactor prompt | `.github/prompts/refactor.prompt.md` | Dead code cleanup and simplification |
+| Plan prompt | `.github/prompts/ecc-plan.prompt.md` | Phased implementation planning |
+| TDD prompt | `.github/prompts/ecc-tdd.prompt.md` | Red-Green-Improve cycle |
+| Security review prompt | `.github/prompts/ecc-security-review.prompt.md` | Deep OWASP-aligned security analysis |
+| Build fix prompt | `.github/prompts/ecc-build-fix.prompt.md` | Systematic build and CI error resolution |
+| Refactor prompt | `.github/prompts/ecc-refactor.prompt.md` | Dead code cleanup and simplification |
 
 The files are already in place: open any repo that contains this project and GitHub Copilot Chat will automatically pick up `.github/copilot-instructions.md`. The committed `.vscode/settings.json` enables `chat.promptFiles` so VS Code can load the reusable prompts from `.github/prompts/`.
 
 To use the workflow prompts in Copilot Chat:
 1. Open the Copilot Chat panel in VS Code.
 2. Click the **paperclip / attach** icon and select **Prompt...**, or type `/` and choose a prompt.
-3. Select the prompt (e.g. `plan`, `tdd`, `security-review`).
+3. Select the prompt (e.g. `ecc-plan`, `ecc-tdd`, `ecc-security-review`).
 
 #### Feature coverage
 
 | ECC Feature | Copilot equivalent |
 |-------------|-------------------|
 | Coding standards | Always-on via `copilot-instructions.md` |
-| Security checklist | Always-on + `security-review` prompt |
-| Testing / TDD | Always-on + `tdd` prompt |
-| Implementation planning | `plan` prompt |
+| Security checklist | Always-on + `ecc-security-review` prompt |
+| Testing / TDD | Always-on + `ecc-tdd` prompt |
+| Implementation planning | `ecc-plan` prompt |
 | Code review | External PR review via CodeRabbit + Greptile |
-| Build error resolution | `build-fix` prompt |
-| Refactoring | `refactor` prompt |
+| Build error resolution | `ecc-build-fix` prompt |
+| Refactoring | `ecc-refactor` prompt |
 | Commit message format | Per-task instruction in `settings.json` |
 | Hooks / automation | Not supported (Copilot has no hook system) |
 | Agents / delegation | Not supported (Copilot has no subagent API) |

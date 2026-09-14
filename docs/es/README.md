@@ -1213,11 +1213,11 @@ ECC proporciona **soporte para GitHub Copilot** para VS Code mediante el sistema
 |------------|---------|-----------|
 | Instrucciones principales | `.github/copilot-instructions.md` | Reglas siempre cargadas: estilo de código, seguridad, pruebas, flujo de git |
 | Configuración de VS Code | `.vscode/settings.json` | Archivos de instrucciones por tarea para generación de código, pruebas y mensajes de commit |
-| Prompt de plan | `.github/prompts/plan.prompt.md` | Planificación de implementación por fases |
-| Prompt de TDD | `.github/prompts/tdd.prompt.md` | Ciclo Rojo-Verde-Mejorar |
-| Prompt de revisión de seguridad | `.github/prompts/security-review.prompt.md` | Análisis de seguridad profundo alineado con OWASP |
-| Prompt de corrección de build | `.github/prompts/build-fix.prompt.md` | Resolución sistemática de errores de build y CI |
-| Prompt de refactorización | `.github/prompts/refactor.prompt.md` | Limpieza de código muerto y simplificación |
+| Prompt de plan | `.github/prompts/ecc-plan.prompt.md` | Planificación de implementación por fases |
+| Prompt de TDD | `.github/prompts/ecc-tdd.prompt.md` | Ciclo Rojo-Verde-Mejorar |
+| Prompt de revisión de seguridad | `.github/prompts/ecc-security-review.prompt.md` | Análisis de seguridad profundo alineado con OWASP |
+| Prompt de corrección de build | `.github/prompts/ecc-build-fix.prompt.md` | Resolución sistemática de errores de build y CI |
+| Prompt de refactorización | `.github/prompts/ecc-refactor.prompt.md` | Limpieza de código muerto y simplificación |
 
 ### Inicio Rápido (GitHub Copilot)
 
@@ -1227,7 +1227,7 @@ El `.vscode/settings.json` confirmado habilita `chat.promptFiles` para que VS Co
 Para usar los prompts de flujo de trabajo en Copilot Chat:
 1. Abre el panel de Copilot Chat en VS Code.
 2. Haz clic en el icono de **clip / adjuntar** y selecciona **Prompt...**, o escribe `/` y elige un prompt.
-3. Selecciona el prompt (por ejemplo, `plan`, `tdd`, `security-review`).
+3. Selecciona el prompt (por ejemplo, `ecc-plan`, `ecc-tdd`, `ecc-security-review`).
 
 ---
 

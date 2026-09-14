@@ -1534,11 +1534,11 @@ ECC bietet **GitHub-Copilot-Unterstützung** für VS Code über das native Instr
 |-----------|------|---------|
 | Kern-Instructions | `.github/copilot-instructions.md` | Stets geladene Rules: Coding-Style, Sicherheit, Testing, Git-Workflow |
 | VS-Code-Einstellungen | `.vscode/settings.json` | Aufgabenspezifische Instruction-Dateien für Codegenerierung, Testgenerierung und Commit-Nachrichten |
-| Plan-Prompt | `.github/prompts/plan.prompt.md` | Phasenweise Implementierungsplanung |
-| TDD-Prompt | `.github/prompts/tdd.prompt.md` | Red-Green-Improve-Zyklus |
-| Security-Review-Prompt | `.github/prompts/security-review.prompt.md` | Tiefe, OWASP-orientierte Sicherheitsanalyse |
-| Build-Fix-Prompt | `.github/prompts/build-fix.prompt.md` | Systematische Behebung von Build- und CI-Fehlern |
-| Refactor-Prompt | `.github/prompts/refactor.prompt.md` | Beseitigung von totem Code und Vereinfachung |
+| Plan-Prompt | `.github/prompts/ecc-plan.prompt.md` | Phasenweise Implementierungsplanung |
+| TDD-Prompt | `.github/prompts/ecc-tdd.prompt.md` | Red-Green-Improve-Zyklus |
+| Security-Review-Prompt | `.github/prompts/ecc-security-review.prompt.md` | Tiefe, OWASP-orientierte Sicherheitsanalyse |
+| Build-Fix-Prompt | `.github/prompts/ecc-build-fix.prompt.md` | Systematische Behebung von Build- und CI-Fehlern |
+| Refactor-Prompt | `.github/prompts/ecc-refactor.prompt.md` | Beseitigung von totem Code und Vereinfachung |
 
 ### Schnellstart (GitHub Copilot)
 
@@ -1548,7 +1548,7 @@ Die eingecheckte `.vscode/settings.json` aktiviert `chat.promptFiles`, sodass VS
 So verwendest du die Workflow-Prompts in Copilot Chat:
 1. Öffne das Copilot-Chat-Panel in VS Code.
 2. Klicke auf das **Büroklammer-/Anhängen-Symbol** und wähle **Prompt...**, oder tippe `/` und wähle einen Prompt.
-3. Wähle den Prompt aus (z. B. `plan`, `tdd`, `security-review`).
+3. Wähle den Prompt aus (z. B. `ecc-plan`, `ecc-tdd`, `ecc-security-review`).
 
 ### Wie es funktioniert
 
@@ -1564,12 +1564,12 @@ Die **`.vscode/settings.json`** fügt aufgabenspezifische Instruction-Overlays h
 | ECC-Feature | Copilot-Entsprechung |
 |-------------|-------------------|
 | Coding-Standards | Stets aktiv über `copilot-instructions.md` |
-| Sicherheits-Checkliste | Stets aktiv + `security-review`-Prompt |
-| Testing / TDD | Stets aktiv + `tdd`-Prompt |
-| Implementierungsplanung | `plan`-Prompt |
+| Sicherheits-Checkliste | Stets aktiv + `ecc-security-review`-Prompt |
+| Testing / TDD | Stets aktiv + `ecc-tdd`-Prompt |
+| Implementierungsplanung | `ecc-plan`-Prompt |
 | Code-Review | Externes PR-Review über CodeRabbit + Greptile |
-| Behebung von Build-Fehlern | `build-fix`-Prompt |
-| Refactoring | `refactor`-Prompt |
+| Behebung von Build-Fehlern | `ecc-build-fix`-Prompt |
+| Refactoring | `ecc-refactor`-Prompt |
 | Commit-Nachrichten-Format | Aufgabenspezifische Instruction in `settings.json` |
 | Hooks / Automatisierung | Nicht unterstützt (Copilot hat kein Hook-System) |
 | Agents / Delegation | Nicht unterstützt (Copilot hat keine Subagent-API) |

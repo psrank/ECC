@@ -273,7 +273,7 @@ cd ECC
 | CodeBuddy | `./install.sh --profile minimal --target codebuddy` | Локальне для проєкту встановлення `.codebuddy/` |
 | JoyCode | `./install.sh --profile minimal --target joycode` | Локальне для проєкту встановлення `.joycode/` |
 
-Підтримка GitHub Copilot вже включена в цей репозиторій. `.github/copilot-instructions.md` надає шар інструкцій, `.github/prompts/` містить повторно використовувані промпти `/plan`, `/tdd`, `/security-review`, `/build-fix` та `/refactor`, а `.vscode/settings.json` вмикає `chat.promptFiles`.
+Підтримка GitHub Copilot вже включена в цей репозиторій. `.github/copilot-instructions.md` надає шар інструкцій, `.github/prompts/` містить повторно використовувані промпти `/ecc-plan`, `/ecc-tdd`, `/ecc-security-review`, `/ecc-build-fix` та `/ecc-refactor`, а `.vscode/settings.json` вмикає `chat.promptFiles`.
 
 Для оболонки без нативної цілі ECC використовуйте [посібник з ручної адаптації](../../docs/MANUAL-ADAPTATION-GUIDE.md). Він пояснює, як перенести невеликий набір навичок і робочих інструкцій ECC у чат-подібні інструменти, не вдаючи, що хуки чи нативне виявлення навичок доступні.
 
@@ -1544,30 +1544,30 @@ ECC надає **підтримку GitHub Copilot** для VS Code через �
 |-----------|------|---------|
 | Основні інструкції | `.github/copilot-instructions.md` | Завжди завантажувані правила: стиль коду, безпека, тестування, git-процес |
 | Налаштування VS Code | `.vscode/settings.json` | Файли інструкцій для конкретних завдань: генерація коду, генерація тестів, повідомлення комітів |
-| Промпт plan | `.github/prompts/plan.prompt.md` | Поетапне планування реалізації |
-| Промпт TDD | `.github/prompts/tdd.prompt.md` | Цикл Червоний-Зелений-Покращення |
-| Промпт перевірки безпеки | `.github/prompts/security-review.prompt.md` | Глибокий аналіз безпеки за OWASP |
-| Промпт виправлення збирання | `.github/prompts/build-fix.prompt.md` | Систематичне вирішення помилок збирання та CI |
-| Промпт рефакторингу | `.github/prompts/refactor.prompt.md` | Очищення мертвого коду та спрощення |
+| Промпт plan | `.github/prompts/ecc-plan.prompt.md` | Поетапне планування реалізації |
+| Промпт TDD | `.github/prompts/ecc-tdd.prompt.md` | Цикл Червоний-Зелений-Покращення |
+| Промпт перевірки безпеки | `.github/prompts/ecc-security-review.prompt.md` | Глибокий аналіз безпеки за OWASP |
+| Промпт виправлення збирання | `.github/prompts/ecc-build-fix.prompt.md` | Систематичне вирішення помилок збирання та CI |
+| Промпт рефакторингу | `.github/prompts/ecc-refactor.prompt.md` | Очищення мертвого коду та спрощення |
 
 Файли вже на місці: відкрийте будь-який репозиторій, що містить цей проєкт, і GitHub Copilot Chat автоматично підхопить `.github/copilot-instructions.md`. Закомічений `.vscode/settings.json` вмикає `chat.promptFiles`, щоб VS Code міг завантажувати повторно використовувані промпти з `.github/prompts/`.
 
 Щоб використовувати промпти процесів у Copilot Chat:
 1. Відкрийте панель Copilot Chat у VS Code.
 2. Клацніть іконку **скріпки / прикріпити** та оберіть **Prompt...**, або введіть `/` та оберіть промпт.
-3. Оберіть промпт (наприклад, `plan`, `tdd`, `security-review`).
+3. Оберіть промпт (наприклад, `ecc-plan`, `ecc-tdd`, `ecc-security-review`).
 
 #### Покриття функцій
 
 | Функція ECC | Еквівалент Copilot |
 |-------------|-------------------|
 | Стандарти кодування | Завжди увімкнено через `copilot-instructions.md` |
-| Контрольний список безпеки | Завжди увімкнено + промпт `security-review` |
-| Тестування / TDD | Завжди увімкнено + промпт `tdd` |
-| Планування реалізації | Промпт `plan` |
+| Контрольний список безпеки | Завжди увімкнено + промпт `ecc-security-review` |
+| Тестування / TDD | Завжди увімкнено + промпт `ecc-tdd` |
+| Планування реалізації | Промпт `ecc-plan` |
 | Перегляд коду | Зовнішній перегляд PR через CodeRabbit + Greptile |
-| Вирішення помилок збірки | Промпт `build-fix` |
-| Рефакторинг | Промпт `refactor` |
+| Вирішення помилок збірки | Промпт `ecc-build-fix` |
+| Рефакторинг | Промпт `ecc-refactor` |
 | Формат повідомлень комітів | Інструкція для конкретного завдання в `settings.json` |
 | Хуки / автоматизація | Не підтримується (Copilot не має системи хуків) |
 | Агенти / делегування | Не підтримується (Copilot не має API підагентів) |
